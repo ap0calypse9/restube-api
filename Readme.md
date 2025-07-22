@@ -9,4 +9,3 @@ A scalable and modular backend system for a YouTube-style video streaming platfo
 - Video search and tagging
 - Play history and watch later
 - RESTful API architecture
-- Optional: Admin panel & analytics
