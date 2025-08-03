@@ -57,7 +57,7 @@ const userSchema = new Schema(
 userSchema.pre("save", async function (next) {  //first we are taking pre hook then using some fn to secure pass using bcrypt
     if(!this.isModified("password")) return next(); //I check if the pass is created/changed if not move to next code
 
-    this.password = bcrypt.hash(this.password, 10)
+    this.password = await bcrypt.hash(this.password, 10)
     next()
 })
 
