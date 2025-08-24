@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js"
 import { uploadOnCLoudinary } from "../utils/cloudinary.js"
 import { Apiresponse } from "../utils/ApiResponse.js"
 import jwt from 'jsonwebtoken'
+import { useReducer } from "react"
 
 
 const generateAccessAndRefreshTokens = async(userId) => {
@@ -265,7 +266,7 @@ const changeCurrentPassword = asyncHandler( async (req, res)=> {
 const getCurrentuser = asyncHandler(async (req, res)=> {
     return res
     .status(200)
-    .json(200, req.user, "Current user fetched scucessfully")
+    .json(new Apiresponse(200, req.user, "Current user fetched scucessfully"))
 })
 
 const updateAccountDetails = asyncHandler(async(res, res)=> {
@@ -275,7 +276,7 @@ const updateAccountDetails = asyncHandler(async(res, res)=> {
         throw new ApiError(400, "All fields are required")
     }
 
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: {
@@ -353,6 +354,79 @@ const updateUserCoverImage = asyncHandler(async(req, res)=> {
 })
 
 
+const getUserChannelProfile = asyncHandler(async(req, res)=> {
+   const {username} = req.params
+
+   if(!username?.trim()) {
+    throw new ApiError(400, "username is missing")
+   }
+
+    const channel = await User.aggregate([
+        {
+            $match: {
+                username: username?.toLowerCase()
+            }
+        },
+        {
+            $lookup: {
+                from: "subcriptions",
+                localField: "_id",
+                foreignField: "channel",
+                as:"subcribers"
+            }
+        },
+        {
+            $lookup: {
+                from: "subcriptions",
+                localField: "_id",
+                foreignField: "subcriber",
+                as:"subcriberdTo"
+            }
+        },
+        {
+            $addFields: {
+                subcribersCount: {
+                    $size: "$subcribers"
+                },
+                channelsSubcribedToCount: {
+                    $size: "subcribedTo"
+                },
+                isSubcribed:{
+                    $cond: {
+                        if: {$in: [req.user?._id,"$subcribers.subcriber"]},
+                        then: true,
+                        else: false
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                fullName: 1,
+                username: 1,
+                subcribersCount: 1,
+                channelsSubcribedToCount: 1,
+                isSubcribed: 1,
+                avatar: 1,
+                coverImage: 1,
+                email: 1,
+
+            }
+        }
+    ])
+
+
+    if(!channel?.length) {
+        throw new ApiError(404,"channel does not exists")
+    }
+
+    return res
+    .status(200)
+    .json(new Apiresponse(200, channel[0], "user channel fetched successfully"))
+
+})
+
+
 export { registerUser,
         loginUser,
         logoutUser,
@@ -361,7 +435,8 @@ export { registerUser,
         changeCurrentPassword,
         updateAccountDetails,
         updateAvatar,
-        updateUserCoverImage
+        updateUserCoverImage,
+        getUserChannelProfile
 
 
  }
