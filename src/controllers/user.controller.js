@@ -141,7 +141,7 @@ const loginUser = asyncHandler(async(req, res)=> {
     const {accessToken, refreshToken} = await
      generateAccessAndRefreshTokens(user._id)
 
-    const loggedUSer = User.findById(user._id).
+    const loggedUSer = await User.findById(user._id).
     select("-password -refreshToken")
 
 
@@ -155,7 +155,7 @@ const loginUser = asyncHandler(async(req, res)=> {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
-        new ApiError(
+        new Apiresponse(
             200,
             {
                 user: loggedUSer,
