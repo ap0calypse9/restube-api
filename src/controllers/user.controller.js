@@ -269,7 +269,7 @@ const getCurrentuser = asyncHandler(async (req, res)=> {
     .json(new Apiresponse(200, req.user, "Current user fetched scucessfully"))
 })
 
-const updateAccountDetails = asyncHandler(async(res, res)=> {
+const updateAccountDetails = asyncHandler(async(req, res)=> {
     const {fullName, email} = req.body
 
     if(!fullName || !email) {
