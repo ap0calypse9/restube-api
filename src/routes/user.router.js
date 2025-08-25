@@ -3,7 +3,9 @@ import { changeCurrentPassword, getCurrentuser, getUserChannelProfile, getWatchH
 import { registerUser } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { verify } from "jsonwebtoken";
+import pkg from "jsonwebtoken";
+const { verify, sign } = pkg;
+
 //import { UploadStream } from "cloudinary";
 
 

@@ -3,8 +3,7 @@ import { ApiError } from "../utils/ApiError.js"
 import { User } from "../models/user.model.js"
 import { uploadOnCLoudinary } from "../utils/cloudinary.js"
 import { Apiresponse } from "../utils/ApiResponse.js"
-import jwt from 'jsonwebtoken'
-import { useReducer } from "react"
+import jwt from "jsonwebtoken"
 
 
 const generateAccessAndRefreshTokens = async(userId) => {
