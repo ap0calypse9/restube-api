@@ -213,10 +213,10 @@ try {
         const user = await User.findById(decodedToken?._id)
     
         if (!user) {
-            throw new ApiError(401, "Invalid refersh Token")
+            throw new ApiError(401, "Invalid refresh Token")
         }
     
-        if(incomingRefreshtoken != user?.refershToken) {
+        if(incomingRefreshtoken !== user?.refreshToken) {
             throw new ApiError(401, "Refresh token is expired or used")
         }
     
@@ -232,7 +232,7 @@ try {
         .json(
             new Apiresponse(
                 200,
-                {accessToken, refershToken: newRefreshToken},
+                {accessToken, refreshToken: newRefreshToken},
                 "Access token refreshed"
             )
         )
